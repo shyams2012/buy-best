@@ -1,0 +1,62 @@
+input AddUserObj {
+  username: String!
+  fullname: String
+  password: String!
+  role: UserRole!
+  isActive: Boolean!
+  streetNo: Int
+  zipCode: Int
+  city: String
+  mobile: String
+  email: String!
+  paymentMethod: PaymentMode
+}
+
+input UpdateUserObj {
+  id: String!
+  username: String
+  fullname: String
+  password: String
+  role: UserRole
+  isActive: Boolean
+  streetNo: Int
+  zipCode: Int
+  city: String
+  mobile: String
+  email: String!
+  paymentMethod: PaymentMode
+}
+
+input UserFilter {
+  id: ID
+  username: String
+  fullname: String
+  isActive: Boolean
+  role: UserRole
+  query: String
+}
+
+enum UserRole {
+  ADMIN
+  EMPLOYEES
+  CUSTOMER
+}
+
+type User {
+  id: ID!
+  username: String!
+  fullname: String!
+  isActive: Boolean!
+  role: UserRole!
+}
+
+extend type Query {
+  getUsers(filter: UserFilter): [User!]!
+  getMe: User!
+  }
+
+extend type Mutation {
+  addUser(data: AddUserObj!): User!
+  updateUser(data: UpdateUserObj!): User!
+  deleteUser(id: String!): Boolean!
+}

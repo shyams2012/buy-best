@@ -1,0 +1,26 @@
+input CustomerCartObj{
+  id: ID
+  customerId: String!
+  productId: [String]!
+}
+
+input UpdateCustomerCart{
+  id: ID!
+  customerId: String!
+  productId: [String]!
+}
+
+type CustomerCart{
+  id: ID!
+  amount: Float!
+}
+
+extend type Mutation {
+  addCustomerCart(productIds: [String]!): CustomerCart!
+  deleteCustomerCart(productIds: [String]!):Boolean!
+}
+
+extend type Query {
+  getCustomerCarts: [CustomerCart]!
+}
+

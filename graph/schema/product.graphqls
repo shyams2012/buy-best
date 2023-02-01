@@ -1,0 +1,63 @@
+input ProductObj {
+    id: ID
+    name: String!
+    price: Float!
+    description: String!
+    model: String!
+}
+
+type Product {
+    id: ID!
+    description: String!
+    name: String!
+    price: Float!
+    model: String!
+}
+
+input ProductFilter {
+    min: Float
+    max: Float
+}
+input TransactionData {
+    id: ID
+    type: TransactionType!
+    price:Float!
+}
+type Transaction {
+    id: ID!
+    userId:ID!
+    productId:ID!
+    type: TransactionType!
+    price:Float!
+    
+}
+
+enum TransactionType {
+  DEBIT
+  CREDIT
+}
+
+enum PaymentMode {
+  STRIPE
+  CASH
+}
+
+
+extend type Query {
+  getProducts(filter: ProductFilter): [Product]!
+  compareProducts(ids: [String]!): [Product]!
+}
+
+input StripePaymentData {
+  productId: String!
+}
+
+type PaymentIntent {
+  clientSecret: String!
+}
+
+extend type Mutation {
+  setProduct(data: ProductObj!): Product!
+  deleteProduct(id: String!): Boolean!
+  createPaymentIntent(data: StripePaymentData!): PaymentIntent!
+}

@@ -1,0 +1,8 @@
+scalar Upload
+
+type UploadReturn {
+  url: String!
+}
+extend type Mutation {
+  singleUpload(file: Upload!): Boolean!
+}
