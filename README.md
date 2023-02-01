@@ -23,7 +23,7 @@
   & run below command 
 
 ```bash 
-    $ make serve .
+    $ make serve 
 ```
 
 <b>Products Features</b>
