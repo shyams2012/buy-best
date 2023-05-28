@@ -46,6 +46,8 @@ func (r *Resolver) _Init(dsn string, config *gorm.Config, initialize bool) {
 			&model.CustomerCart{},
 			&model.CustomerAmount{},
 			&model.Image{},
+			&model.Charge{},
+			&model.Inventory{},
 		)
 
 		if err != nil {

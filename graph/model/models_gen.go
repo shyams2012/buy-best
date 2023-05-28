@@ -33,6 +33,17 @@ type CustomerCartObj struct {
 	ProductID  []*string `json:"productId"`
 }
 
+type InventoryObj struct {
+	ID        *string `json:"id"`
+	ProductID string  `json:"productId"`
+	Quantity  float64 `json:"quantity"`
+}
+
+type Pagination struct {
+	Page  int `json:"page"`
+	Limit int `json:"limit"`
+}
+
 type PaymentIntent struct {
 	ClientSecret string `json:"clientSecret"`
 }
@@ -92,6 +103,15 @@ type UserFilter struct {
 	IsActive *bool     `json:"isActive"`
 	Role     *UserRole `json:"role"`
 	Query    *string   `json:"query"`
+}
+
+type ProductList struct {
+	PageInfo *ProductPageInfo `json:"pageInfo"`
+	Product  []*Product       `json:"product"`
+}
+
+type ProductPageInfo struct {
+	TotalPages int `json:"totalPages"`
 }
 
 type PaymentMode string

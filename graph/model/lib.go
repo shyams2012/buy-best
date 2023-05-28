@@ -22,3 +22,5 @@ func DeleteObject(db *gorm.DB, object interface{}, id string) (bool, error) {
 
 	return true, nil
 }
+
+

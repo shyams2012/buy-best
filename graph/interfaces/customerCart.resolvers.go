@@ -18,6 +18,7 @@ import (
 // AddCustomerCart is the resolver for the addCustomerCart field.
 func (r *mutationResolver) AddCustomerCart(ctx context.Context, productIds []*string) (*model.CustomerCart, error) {
 	loggedUser, _ := r.Query().GetMe(ctx)
+	//var inventory []*model.Inventory
 
 	var customerCart model.CustomerCart
 	var customerAmount model.CustomerAmount
@@ -26,24 +27,47 @@ func (r *mutationResolver) AddCustomerCart(ctx context.Context, productIds []*st
 	customerCart.ModifiedAt = time.Now()
 	var price float64
 	var sum float64
+	var quantities []int
+	// if tx := r.DB().Find(&inventory); tx.Error != nil {
+	// 	log.Print(tx.Error)
+	// 	return nil, tx.Error
+	// }
+	// type Result struct {
+	// 	Quantity int
+	// }
+
+	// var result []Result
 
 	for _, productId := range productIds {
-		customerCart.ID = uuid.NewString()
-		customerCart.ProductID = *productId
-		if tx := r.DB().Table("products").Select("price").Where("id = ?", productId).Scan(&price); tx.Error != nil {
+
+		if tx := r.DB().Table("inventories").Select("quantity").Where("product_id = ?", productId).Scan(&quantities); tx.Error != nil {
 			log.Print(tx.Error)
-			return nil, fmt.Errorf("price not Found, id=%s", *productId)
+			return nil, fmt.Errorf("quantity not Found, id=%s", *productId)
 		}
 
-		customerCart.Amount = price
-		sum += price
+		for _, quantity := range quantities {
+			if quantity != 0 {
+				fmt.Print("found", quantity)
 
-		if tx := r.DB().Create(&customerCart); tx.Error != nil {
-			log.Print(tx.Error)
-			return nil, fmt.Errorf("error saving customerCart")
+				customerCart.ID = uuid.NewString()
+				customerCart.ProductID = *productId
+				if tx := r.DB().Table("products").Select("price").Where("id = ?", productId).Scan(&price); tx.Error != nil {
+					log.Print(tx.Error)
+					return nil, fmt.Errorf("price not Found, id=%s", *productId)
+				}
 
+				customerCart.Amount = price
+				sum += price
+
+				if tx := r.DB().Create(&customerCart); tx.Error != nil {
+					log.Print(tx.Error)
+					return nil, fmt.Errorf("error saving customerCart")
+
+				}
+			} else {
+				fmt.Print("out of stock")
+			}
 		}
-
 	}
 
 	customerAmount.ID = uuid.NewString()

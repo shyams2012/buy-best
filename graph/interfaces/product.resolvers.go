@@ -12,6 +12,7 @@ import (
 	"os"
 
 	"github.com/google/uuid"
+	"github.com/shyams2012/buy-best/Pagination"
 	"github.com/shyams2012/buy-best/graph/generated"
 	"github.com/shyams2012/buy-best/graph/model"
 	stripe "github.com/stripe/stripe-go"
@@ -87,20 +88,49 @@ func (r *mutationResolver) CreatePaymentIntent(ctx context.Context, data model.S
 }
 
 // GetProducts is the resolver for the getProducts field.
-func (r *queryResolver) GetProducts(ctx context.Context, filter *model.ProductFilter) ([]*model.Product, error) {
-	var product []*model.Product
-	if filter == nil {
-		if tx := r.DB().Find(&product); tx.Error != nil {
+func (r *queryResolver) GetProducts(ctx context.Context, filter *model.ProductFilter, pagination *model.Pagination) (*model.ProductList, error) {
+	var products []*model.Product
+	// if filter == nil {
+	// 	if tx := r.DB().Find(&product); tx.Error != nil {
+	// 		log.Print(tx.Error)
+	// 		return nil, tx.Error
+	// 	}
+	// } else {
+	// 	if tx := r.DB().Where("price between ? and ?", *filter.Min, *filter.Max).Find(&product); tx.Error != nil {
+	// 		log.Print(tx.Error)
+	// 		return nil, tx.Error
+	// 	}
+	// }
+	// return product, nil
+
+	if pagination != nil {
+
+		tx := r.DBWithFilter(filter).Scopes(Pagination.Paginate(&pagination.Page, &pagination.Limit)).Find(&products)
+
+		if tx.Error != nil {
 			log.Print(tx.Error)
 			return nil, tx.Error
 		}
-	} else {
-		if tx := r.DB().Where("price between ? and ?", *filter.Min, *filter.Max).Find(&product); tx.Error != nil {
-			log.Print(tx.Error)
-			return nil, tx.Error
-		}
+		var totalRows int64
+		tx.Count(&totalRows)
+		count := int(totalRows)
+		totalpage := &model.ProductPageInfo{TotalPages: count}
+		productlists := &model.ProductList{PageInfo: totalpage, Product: products}
+		return productlists, nil
 	}
-	return product, nil
+	tx := r.DB().Find(&products)
+	if tx.Error != nil {
+		log.Print(tx.Error)
+		return nil, tx.Error
+	}
+
+	var totalRows int64
+	tx.Count(&totalRows)
+	count := int(totalRows)
+	totalpage := &model.ProductPageInfo{TotalPages: count}
+
+	productlist := &model.ProductList{PageInfo: totalpage, Product: products}
+	return productlist, nil
 }
 
 // CompareProducts is the resolver for the compareProducts field.

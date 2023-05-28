@@ -1,0 +1,16 @@
+input InventoryObj {
+    id: ID
+    productId: String!
+    quantity: Float!
+}
+
+type Inventory {
+    id: ID!
+    productId: String!
+    quantity: Float! 
+}
+
+extend type Mutation {
+   setInventory(data: InventoryObj!): Inventory!
+   deleteInventory(id: String!): Boolean!
+}

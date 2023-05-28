@@ -42,9 +42,18 @@ enum PaymentMode {
   CASH
 }
 
+type productPageInfo {
+  totalPages: Int!
+}
+type productList {
+  pageInfo: productPageInfo!
+  product: [Product!]!
+}
+
 
 extend type Query {
-  getProducts(filter: ProductFilter): [Product]!
+  getProducts(filter: ProductFilter, pagination: Pagination): productList!
+  # getProducts(filter: ProductFilter): [Product]!
   compareProducts(ids: [String]!): [Product]!
 }
 
@@ -54,6 +63,10 @@ input StripePaymentData {
 
 type PaymentIntent {
   clientSecret: String!
+}
+input Pagination {
+  page: Int!
+  limit: Int!
 }
 
 extend type Mutation {
