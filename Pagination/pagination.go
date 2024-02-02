@@ -1,6 +1,8 @@
 package Pagination
 
 import (
+	"fmt"
+
 	"gorm.io/gorm"
 )
 
@@ -19,4 +21,8 @@ func Paginate(page *int, limit *int) func(db *gorm.DB) *gorm.DB {
 		}
 
 	}
+}
+
+func test() {
+	fmt.Print("hello")
 }
