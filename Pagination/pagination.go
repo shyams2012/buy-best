@@ -23,6 +23,6 @@ func Paginate(page *int, limit *int) func(db *gorm.DB) *gorm.DB {
 	}
 }
 
-func test() {
+func test7() {
 	fmt.Print("hello")
 }
